@@ -1,0 +1,52 @@
+<apex:page sidebar="false" showheader="false" controller="CreateContactController">
+      <style>
+           #loadingImage{
+                top: 50px;           
+                left: 150px;     
+                z-index:1001;  
+                position:absolute;
+           }    
+      </style>
+      <script>
+            function gotoParent(newContactID,errorMsg, mode){        
+               if(newContactID != '' && errorMsg == ''){
+                   //parent.window.open("/"+newContactID,"mywindow"); // open in new tab on parent window
+                   window.opener.location.href= "/"+newContactID; //open in same tab on parent window
+                   window.top.close();
+               }
+               else{
+                   showMessage('ERROR', errorMsg);
+               }
+            }
+      </script>
+      <apex:form >
+           <div id="loadingImage">              
+                 <apex:actionStatus id="WaitingStatus">    
+                     <apex:facet name="start">
+                         <img src="/img/loading.gif" />&nbsp;Please wait...
+                     </apex:facet>
+                 </apex:actionStatus>
+           </div> 
+          
+           <apex:pageBlock rendered="{!isPickListShow}">
+                 <apex:pageBlockButtons location="bottom">
+                      <apex:commandButton value="Save" action="{!createContact}" status="WaitingStatus" onComplete="gotoParent('{!newContactSobj.id}','{!errorMessage}','{!mode}');"/>
+                      <apex:commandButton value="Cancel" onClick="javascript:window.close();"/>
+                 </apex:pageBlockButtons>
+                 <apex:pageBlockSection columns="1">
+                     <apex:pageBlockSectionItem dataStyle="text-align:left; width: 25%;">
+                            <apex:outputLabel value="Record Type of new record" for="recordTypeName" />
+                            <apex:selectList id="recordTypeName" value="{!selectedRecordTypeName}" size="1">
+                                 <apex:selectOptions value="{!recordTypeOptions}"/>
+                            </apex:selectList>
+                     </apex:pageBlockSectionItem>
+                 </apex:pageBlockSection>
+           </apex:pageBlock>
+            <apex:pageMessages id="msgId" escape="false" rendered="{!!isPickListShow}"/>
+           <apex:actionFunction name="showMessage" action="{!showMessage}" rerender="msgId">
+                 <apex:param name="errorLevel" assignTo="{!errorLevel}" value="" />
+                 <apex:param name="messageName" assignTo="{!messageName}" value="" />
+            </apex:actionFunction>
+      </apex:form>
+
+</apex:page>

@@ -1,0 +1,56 @@
+<apex:page sidebar="false" showheader="false" controller="CreateLinkContactExtension">
+      <style>
+           #loadingImage{
+                top: 50px;           
+                left: 150px;     
+                z-index:1001;  
+                position:absolute;
+           }
+   
+      </style>
+      <script>
+            
+            function gotoParent(newContactID,errorMsg){      
+               if(newContactID != '' && errorMsg == ''){
+                   //parent.window.open("/"+newContactID,"mywindow"); // open in new tab on parent window
+                   //window.opener.location.href= "/"+newContactID; //open in same tab on parent window
+                   alert(errorMsg);
+                   window.top.close();
+               }
+               else{
+                   alert(errorMsg);
+               }
+               
+            }
+      </script>
+      <apex:form >
+
+          
+
+           <div id="loadingImage">              
+                 <apex:actionStatus id="WaitingStatus">    
+                     <apex:facet name="start">
+                         <img src="/img/loading.gif" />&nbsp;Please wait...
+                     </apex:facet>
+                 </apex:actionStatus>
+           </div> 
+           <apex:pageBlock rendered="{!!flagPopContactDetail}">
+ 				
+                 <apex:pageBlockButtons location="bottom">
+                      <apex:commandButton value="Save" action="{!createContact}" status="WaitingStatus" onComplete="gotoParent('{!newContactSobj.id}','{!errorMessage}','{!mode}');"/>
+                      <apex:commandButton value="Cancel" onClick="javascript:window.close();"/>
+                 </apex:pageBlockButtons>
+                 <apex:pageBlockSection columns="1">
+                     <apex:pageBlockSectionItem dataStyle="text-align:left; width: 25%;">
+                            <apex:outputLabel value="Record Type of new record" for="recordTypeName" />
+                            <apex:selectList id="recordTypeName" value="{!selectedRecordTypeId}" size="1">
+                                 <apex:selectOptions value="{!ContactRecordTypes}"/>
+                            </apex:selectList>
+                     </apex:pageBlockSectionItem>
+                 </apex:pageBlockSection>
+                
+           </apex:pageBlock>
+			<apex:pageMessages />
+      </apex:form>
+
+</apex:page>

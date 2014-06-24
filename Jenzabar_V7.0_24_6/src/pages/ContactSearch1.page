@@ -1,0 +1,115 @@
+<apex:page standardController="Contact"
+    extensions="ContactSearchController">
+
+    <style>
+#loadingImage {
+    top: 225px;
+    left: 600px;
+    z-index: 1001;
+    position: absolute;
+}
+</style>
+
+
+
+    <apex:sectionheader title="Search Contacts" />
+    <apex:includescript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" />
+    <apex:outputPanel id="searchPanel" styleClass="searchFilterFields">
+        <apex:form id="searchForm">
+
+            <div id="loadingImage">
+                <apex:actionStatus id="WaitingStatus">
+                    <apex:facet name="start">
+                        <img src="/img/loading.gif" />&nbsp;Please wait...
+                     </apex:facet>
+                </apex:actionStatus>
+            </div>
+
+            <apex:pageblock >
+                <!-- <apex:pageMessage severity="warning" strength="3" /> -->
+                <apex:pageMessages />
+
+                <table width="100%">
+                    <tr>
+                        
+                        <apex:repeat value="{!editableFields}" var="f">
+                            <apex:outputPanel rendered="{!AND($ObjectType.Contact.Fields[f].label != 'First Name',$ObjectType.Contact.Fields[f].label != 'Last Name')}">
+                        <td><span style="padding: 3px">{!$ObjectType.Contact.Fields[f].label}
+                        <apex:inputField value="{!contactVal[f]}" /></span></td>
+                            </apex:outputPanel>
+                            
+                            <apex:outputPanel rendered="{!$ObjectType.Contact.Fields[f].label == 'First Name'}">
+                            <td><span style="padding: 3px">Name
+                        <apex:inputText value="{!nameValue}" /></span></td>
+                            </apex:outputPanel>
+                        </apex:repeat>
+
+                        <td><apex:commandButton id="ButtonStatus" value="Search" action="{!doSearch}"
+                                status="WaitingStatus"/></td>
+                    </tr>
+                </table>
+
+            </apex:pageblock>
+
+            <script>
+                 function openPopup(){
+                            var j$ = jQuery.noConflict();
+                            var radio = j$('input[name=selectRadio]:checked');
+                            var updateDay = radio.val();
+                            var id = radio.attr('id');
+                            //next(id);
+                            //alert('id----'+id);
+                            LeftPosition = (screen.width) ? (screen.width-430)/2 : 0;
+                            TopPosition = (screen.height) ? (screen.height-200)/2 : 0;
+                            settings = 'height='+120+',width='+430+',top='+TopPosition+',left='+LeftPosition+',scrollbars='+scroll+',resizable';
+                            if(id!=null){
+                                window.open('/apex/CreateContact?contactId='+id+'&mode=custom','',settings);
+                            }    
+                            else{
+                                alert('Select a contact for creating Contact Link');
+                            }
+                 }
+            </script>
+
+            <apex:pageBlock >
+
+                <apex:commandButton value="Create New Contact"
+                    style="margin-left:27%" action="{!createNew}" />
+                <apex:commandButton onclick="openPopup();"
+                    value="Create New Contact/Link" id="btn3" rerender="Msgs"
+                    rendered="{!flagContactLinkButton}">
+                </apex:commandButton>
+                <apex:actionFunction name="next" rerender="Msgs">
+                    <apex:param name="selected" value="Msgs" />
+                </apex:actionFunction>
+
+
+                <br />
+                <br />
+                
+                <apex:outputPanel rendered="{!flagContactsListPanel}"
+                    style="margin-left:27%">"{!$Label.Contact_Search_Message}"</apex:outputPanel>
+                <apex:pageBlockTable id="contactPg" value="{!displayList}" var="c"
+                    rendered="{!flagErrorMessage}">
+                    <apex:column headerValue="Sel">
+                        <input type="radio" name="selectRadio" id="{!c.id}" />
+                    </apex:column>
+                    <apex:column headervalue="Name">
+                        <apex:outputlink value="/{!c.Id}" target="_ ">{!c.Name}</apex:outputlink>
+                    </apex:column>
+                    <apex:column headerValue="Email">
+                        <apex:outputtext value="{!c.Email}" />
+                    </apex:column>
+                    <apex:column headerValue="Record Type">
+                        <apex:outputtext value="{!c.RecordType.Name}" />
+                    </apex:column>
+                    <apex:column >
+                        <apex:outputlink value="/{!c.id}?flagDeleteRedirect={!flagDeleteRedirect}">Use</apex:outputlink>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </apex:form>
+
+    </apex:outputPanel>
+
+</apex:page>
