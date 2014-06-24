@@ -1,0 +1,88 @@
+<apex:component id="custLkp" allowDML="true" controller="CustomLookupCtlr">
+    <!-- Required Attributes -->
+    <apex:attribute name="sobjectType" 
+                    description="Standard object type on which field set will iterate" 
+                    type="String" 
+                    required="true"
+                    assignTo="{!objectName}"/> 
+                   
+        <style>
+        .lookupIcon1 {
+            background-image: url(/img/func_icons/util/lookup20.gif);
+            background-position: 0 0;
+            width: 20px;
+            height: 20px;
+            background-position: top left;
+        }
+        .lookupInput img {
+            display: none;
+        }
+        .labelClass{
+			text-align: right;
+			font-weight: bold;
+			width: 20%;        
+        }
+        </style>
+    <head>
+ 
+    <Script>
+    var lksrch;
+    var txtid;
+        function OpenLookUpWindow(fapi){         
+            var baseURL = "/apex/CustomLookUp";
+            baseURL = baseURL +'?fapi='+fapi;
+            baseURL = baseURL +'&objname='+'{!objectName}';
+            baseURL = baseURL +'&lksrch='+lksrch;
+            baseURL = baseURL +'&frm=:myForm';
+            baseURL = baseURL +'&txt='+txtid;
+            alert(baseURL);
+            window.open(baseURL,'Lookup','left=20,top=20,width=718,height=600,toolbar=1,resizable=0');
+        }
+        function getTxt(txt){
+        	lksrch = txt.value;
+        	txtid = txt.id;
+        }
+        
+    </Script>
+    </head> 
+    <apex:form id="myForm"> 
+		<apex:actionFunction action="{!getRefrenceid}" name="refId">
+		<apex:param name="rId" value="" assignTo="{!refId}"/> 
+		</apex:actionFunction>    
+            <apex:pageBlock id="lookUpBlock" mode="maindetail"> 
+                <apex:PageBlockButtons id="pgBtns" location="top">  
+                    <apex:CommandButton id="saveButton" action="{!doSave}" value="Save" rendered="{!!isContent}"/>
+                    <apex:CommandButton id="cancelButton" action="{!cancel}" value="Cancel" rendered="{!!isContent}"/>
+                    <apex:CommandButton id="editButton" value="Edit" action="{!edit}" rendered="{!isContent}"/>
+                </apex:PageBlockButtons>
+                <br/>
+<!--         <apex:pageBlockTable value="{!fieldSetMemberList}" var="item">
+            <apex:column value="{!item.label}" styleClass="labelClass"/> 
+			<apex:column >
+				<apex:inputField id="txtId" value="{!sObj[item]}" onchange="getTxt(this);"/>
+                <apex:commandLink id="theCommandLink" onclick="OpenLookUpWindow('{!item}');" style="text-decoration: none;" rerender="Status">
+                   <img class="lookupIcon1" title="Lookup (New Window)" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onblur="this.className = 'lookupIcon';" alt="Lookup (New Window)" src="/s.gif" />
+                </apex:commandLink>				
+			</apex:column>
+        </apex:pageBlockTable>  --> 
+         
+         <apex:pageBlockTable value="{!lstFields}" var="f"> 
+            <apex:column value="{!f.fieldLabel}" styleClass="labelClass"/>  
+ 			<apex:column > 
+ 				<apex:inputText id="txtinId" value="{!f.fieldValue}" onchange="getTxt(this);"/> 
+                 <apex:commandLink id="theCommandLink" onclick="OpenLookUpWindow('{!f.fieldApi}');" style="text-decoration: none;" rerender="Status"> 
+                    <img class="lookupIcon1" title="Lookup (New Window)" onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" onfocus="this.className = 'lookupIconOn';" onblur="this.className = 'lookupIcon';" alt="Lookup (New Window)" src="/s.gif" /> 
+                 </apex:commandLink>				 
+ 			</apex:column> 
+         </apex:pageBlockTable>         
+        
+<!--          <apex:variable var="index" value="{!0}" /> 
+			 <apex:repeat value="{!lstFields}" var="ff" id="theRepeat">
+	 		 	{!lstFields[index].fieldLabel} 
+				<apex:inputText id="txtinId" value="{!lstFields[index].fieldValue}" onchange="getTxt(this);"/>
+			    <apex:variable var="index" value="{!index+1}"/>		
+			 </apex:repeat>   -->
+           </apex:pageBlock>
+     </apex:form>
+     
+</apex:component>

@@ -1,0 +1,49 @@
+<apex:page standardController="Contact" extensions="ContactLinkController">
+    <style>
+        #loadingImage{
+             top: 180px;           
+             left: 550px;     
+             z-index:1001;  
+             position:absolute;
+        }    
+    </style> 
+    <script>
+          function openContactLink(contactLinkId){
+              var cLink = '{!baseUrl}' +'/'+ contactLinkId;
+              window.open(cLink, '_blank');
+          }
+          function refreshParentPage(){
+              refreshContactLinkBlock('reLoad');
+          }
+    </script> 
+    <apex:sectionheader title="Search/Link Contacts" />
+            <div id="loadingImage">              
+              <apex:actionStatus id="WaitingStatus">    
+                 <apex:facet name="start">
+                      <img src="/img/loading.gif" />&nbsp;Please wait...
+                  </apex:facet>
+              </apex:actionStatus>
+            </div>
+            
+            <apex:form id="searchLinkFormId" >
+               <!--  <apex:pageMessages id="msgId1" /> -->
+                <apex:commandLink value="Back" action="{!goBack}" style="margin-left:5px;font-size:12px;" /><br/>
+	            <apex:pageBlock id="contactAssociationBlockId" title="Contact Associations">
+	                <apex:outputLabel value="{!$Label.Contact_Association_Message}" rendered="{!!isContactLinkTable}" />
+	                <apex:pageBlockTable id="contactLinkPg" value="{!contactLinkList}" var="contactLinkInst" rendered="{!isContactLinkTable}">
+	                    <apex:column >
+	                         <apex:facet Name="header">Contact Link</apex:facet>    
+	                         <apex:commandLink value="{!contactLinkInst.Name}" onClick="openContactLink('{!contactLinkInst.Id}');return false;" />                              
+	                    </apex:column>                        
+	                    <apex:repeat value="{!relationShipName}" var="field">
+	                        <apex:column value="{!contactLinkInst[field]}" onClick="openContactLink('{!contactLinkInst[field]}');return false;"/>
+	                    </apex:repeat>
+	                </apex:pageBlockTable>
+	            </apex:pageBlock>
+	            <apex:actionFunction name="refreshContactLinkBlock" action="{!getCopyContactLinksList}" status="WaitingStatus" reRender="searchLinkFormId,contactAssociationBlockId" >
+	                   <apex:param name="cntctId"  value=""></apex:param>                  
+	            </apex:actionFunction> 
+            </apex:form>
+            <c:SearchComponent id="contactSearchComponent" SourceContactId="{!sourceContactId}"/>
+            
+</apex:page>

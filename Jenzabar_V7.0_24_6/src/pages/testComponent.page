@@ -1,0 +1,5 @@
+<apex:page id="thePage">
+        <apex:pageBlock id="pb1">
+            <c:CustomLookup id="customLkp" sobjectType="Contact"/>
+        </apex:pageBlock>
+</apex:page>

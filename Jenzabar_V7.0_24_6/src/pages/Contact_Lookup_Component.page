@@ -1,0 +1,114 @@
+<apex:page id="lookUpPage" docType="html-5.0" StandardController="Contact" extensions="ContactLookUpController">
+      <script type="text/javascript"> 
+          function openLookup(baseURL, width, modified, searchParam){
+                var originalbaseURL = baseURL;
+                var originalwidth = width;
+                var originalmodified = modified;
+                var originalsearchParam = searchParam;
+                
+                console.log('originalbaseURL-----'+originalbaseURL);
+                console.log('originalsearchParam------'+originalsearchParam);
+                
+                var lookupType = baseURL.substr(baseURL.length-3, 3);
+                if (modified == '1') baseURL = baseURL + searchParam;
+                
+                var isCustomLookup = false;
+                
+                // Following "a0H" is the lookup type for reference object so change this as per your standard or custom object
+                if(lookupType == "a0H"){
+                      var urlArr = baseURL.split("&");
+                      var txtId = '';
+                      if(urlArr.length > 2) {
+                         urlArr = urlArr[1].split('=');
+                         txtId = urlArr[1];
+                      }
+                      // Following is the url of Custom Lookup page. You need to change that accordingly
+                      baseURL = "/apex/CustomLookup?txt=" + txtId;            
+                      // Following is the id of apex:form control "myForm". You need to change that accordingly
+                      baseURL = baseURL + "&frm=" + escapeUTF("{!$Component.myForm}");
+                      if (modified == '1') {
+                           baseURL = baseURL + "&lksearch=" + searchParam;
+                      }     
+                      console.log('baseURL-----'+baseURL);  
+                        
+                      isCustomLookup = true;
+                }
+                if(isCustomLookup == true){
+                    openPopup(baseURL, "lookup", 350, 480, "width="+width+",height=480,toolbar=no,status=no,directories=no,menubar=no,resizable=yes,scrollable=no", true);
+                }
+                else {
+                    if (modified == '1') originalbaseURL = originalbaseURL + originalsearchParam;
+                    openPopup(originalbaseURL, "lookup", 350, 480, "width="+originalwidth+",height=480,toolbar=no,status=no,directories=no,menubar=no,resizable=yes,scrollable=no", true);
+                } 
+         }
+         
+      </script>
+      <apex:form id="myForm">
+            <apex:pageBlock id="lookUpBlock" mode="maindetail">
+                <apex:PageBlockButtons id="pgBtns" location="top">  
+                    <apex:CommandButton id="saveButton" action="{!doSave}" value="Save" rendered="{!!isContent}"/>
+                    <apex:CommandButton id="cancelButton" action="{!cancel}" value="Cancel" rendered="{!!isContent}"/>
+                    <apex:CommandButton id="editButton" value="Edit" action="{!edit}" rendered="{!isContent}"/>
+                </apex:PageBlockButtons>
+                <br/>
+                <apex:pageBlockSection id="lookUpSectionId" columns="2">
+                      <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="{!$ObjectType.Contact.Fields.Academic_Standing_Type__c.Label}" />
+                           <apex:outputPanel >
+                               <apex:outputField value="{!contactInst.Academic_Standing_Type__c}" rendered="{!isContent}"/>
+                               <apex:inputField id="Academic_Standing_Type__c" value="{!contactInst.Academic_Standing_Type__c}" rendered="{!!isContent}" list="{!strList}"/>
+                           </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="{!$ObjectType.Contact.Fields.Citizen_Type__c.Label}" />
+                           <apex:outputPanel >
+                                <apex:outputField value="{!contactInst.Citizen_Type__c}" rendered="{!isContent}"/>
+                                <apex:inputField id="Citizen_Type__c" value="{!contactInst.Citizen_Type__c}" rendered="{!!isContent}"/>
+                           </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="{!$ObjectType.Contact.Fields.Class_Status_Code__c.Label}" />
+                           <apex:outputPanel >
+                                <apex:outputField value="{!contactInst.Class_Status_Code__c}" rendered="{!isContent}"/>
+                                <apex:inputField id="Class_Status_Code__c" value="{!contactInst.Class_Status_Code__c}" rendered="{!!isContent}"/>
+                           </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="{!$ObjectType.Contact.Fields.Institution_Status_Code__c.Label}" />
+                           <apex:outputPanel >
+                                <apex:outputField value="{!contactInst.Institution_Status_Code__c}" rendered="{!isContent}"/>
+                                <apex:inputField id="Institution_Status_Code__c" value="{!contactInst.Institution_Status_Code__c}" rendered="{!!isContent}"/>
+                           </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="{!$ObjectType.Contact.Fields.Religion_Type__c.Label}" />
+                           <apex:outputPanel >
+                                <apex:outputField value="{!contactInst.Religion_Type__c}" rendered="{!isContent}"/>
+                                <apex:inputField id="Religion_Type__c" value="{!contactInst.Religion_Type__c}" rendered="{!!isContent}"/>
+                           </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="{!$ObjectType.Contact.Fields.Student_Status_Code__c.Label}" />
+                           <apex:outputPanel >
+                                <apex:outputField value="{!contactInst.Student_Status_Code__c}" rendered="{!isContent}"/>
+                                <apex:inputField id="Student_Status_Code__c" value="{!contactInst.Student_Status_Code__c}" rendered="{!!isContent}" />
+                           </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="{!$ObjectType.Contact.Fields.Instructor_Type__c.Label}" />
+                           <apex:outputPanel >
+                                <apex:outputField value="{!contactInst.Instructor_Type__c}" rendered="{!isContent}"/>
+                                <apex:inputField id="Instructor_Type__c" value="{!contactInst.Instructor_Type__c}" rendered="{!!isContent}"/>
+                           </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="{!$ObjectType.Contact.Fields.Part_Time_Full_Time_Status__c.Label}" />
+                           <apex:outputPanel >
+                                <apex:outputField value="{!contactInst.Part_Time_Full_Time_Status__c}" rendered="{!isContent}"/>
+                                <apex:inputField id="Part_Time_Full_Time_Status__c" value="{!contactInst.Part_Time_Full_Time_Status__c}" rendered="{!!isContent}" />
+                           </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+      </apex:form>
+</apex:page>

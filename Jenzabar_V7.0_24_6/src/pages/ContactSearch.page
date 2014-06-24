@@ -1,0 +1,4 @@
+<apex:page id="contactSearchPage" standardController="Contact" recordSetVar="Contacts">
+     <apex:sectionheader title="Search Contacts" />
+     <c:SearchComponent id="contactSearchComponent" />
+</apex:page>

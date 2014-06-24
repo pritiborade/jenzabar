@@ -1,0 +1,50 @@
+<apex:page showheader="false" sidebar="false" controller="CustomLookUpController">
+    <Script>
+        function getSelected(name,rId){
+        
+	      var winMain=window.opener;
+	      if (null==winMain)
+	      {
+	         winMain=window.parent.opener;
+	      }
+	      var ele=winMain.document.getElementById('{!TextBox}');
+	      ele.value=name;
+	      
+	      //var fid=winMain.document.getElementById('{!TextBox}');
+	      //fid.value=rId;
+		  window.close();
+        }
+      
+        
+    </Script>
+   <apex:form id="lookUpForm">
+   
+      <apex:outputPanel id="outerPanel" layout="block" style="margin:5px;padding:10px;padding-top:2px;">
+		  <apex:tabPanel switchType="client" selectedTab="name1" id="tabbedPanel">
+	      <!-- SEARCH TAB -->
+	      <apex:tab label="Search" name="searchTab" id="searchTab">
+			    <apex:actionRegion >  
+					  <apex:outputPanel id="top" layout="block" style="margin:5px;padding:10px;padding-top:2px;">
+					    <apex:outputLabel value="Search" style="font-weight:Bold;padding-right:10px;" for="txtSearch"/>
+					    <apex:inputText id="txtSearch" value="{!searchString}" onClick="reply_click()"/>
+					      <span style="padding-left:5px"><apex:commandButton id="btnGo" value="Go" action="{!Search}" rerender="searchResults"></apex:commandButton></span>
+					  </apex:outputPanel>
+	
+				    <apex:outputPanel id="pnlSearchResults" style="margin:10px;height:350px;overflow-Y:auto;" layout="block">
+					    <apex:pageBlock id="searchResults"> 
+					      <apex:pageBlockTable value="{!results}" var="a" id="tblResults">
+					        <apex:column >
+					          <apex:facet name="header">
+					            <apex:outputPanel >Name</apex:outputPanel>
+					          </apex:facet>
+					           <apex:outputLink value="javascript:top.window.opener.lookupPick2('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!a.Id}','{!a.Name}', false)" rendered="{!NOT(ISNULL(a.Id))}" onclick="getSelected('{!a.Name}','{!a.id}');">{!a.Name}</apex:outputLink>     
+					        </apex:column>
+					      </apex:pageBlockTable>
+					    </apex:pageBlock>
+				    </apex:outputPanel>
+			    </apex:actionRegion>
+			</apex:tab>
+		  </apex:tabPanel>
+   	</apex:outputPanel>
+   </apex:form>		
+</apex:page>
